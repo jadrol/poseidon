@@ -1,6 +1,8 @@
 require 'integration/multiple_brokers/spec_helper'
 
 RSpec.describe "producer handles rebalancing", :type => :request do
+  include_context "a multiple broker cluster"
+
   before(:each) do
     # autocreate the topic by asking for information about it
     @c = Connection.new("localhost", 9093, "metadata_fetcher", 10_000)

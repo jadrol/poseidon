@@ -35,7 +35,7 @@ module Poseidon
     end
 
     def exists?
-      struct.error == 0
+      struct.error == Errors::NO_ERROR_CODE
     end
 
     def eql?(o)
@@ -56,7 +56,7 @@ module Poseidon
 
     def available_partitions
       @available_partitions ||= struct.partitions.select do |partition|
-        partition.error == 0 && partition.leader != -1
+        (partition.error == Errors::NO_ERROR_CODE || partition.error_class == Errors::ReplicaNotAvailable) && partition.leader != -1
       end
     end
 

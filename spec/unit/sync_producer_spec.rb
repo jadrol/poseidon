@@ -76,8 +76,19 @@ RSpec.describe SyncProducer do
         @sp.send_messages([Message.new(:topic => "topic", :value => "value")]) rescue StandardError
       end
 
-      it "refreshes metadata between retries" do
-        expect(@cluster_metadata).to receive(:update).exactly(4).times
+      it "resets and refreshes metadata between retries" do
+        # First check
+        expect(@mbts).to receive(:needs_metadata?).and_return(false).ordered
+
+        # After first failure
+        3.times do
+          expect(@cluster_metadata).to receive(:reset).ordered
+          expect(@broker_pool).to receive(:close).ordered
+          expect(@mbts).to receive(:needs_metadata?).and_return(true).ordered
+          expect(@cluster_metadata).to receive(:update).ordered
+          expect(@mbts).to receive(:needs_metadata?).and_return(false).ordered
+        end
+
         @sp.send_messages([Message.new(:topic => "topic", :value => "value")]) rescue StandardError
       end
 

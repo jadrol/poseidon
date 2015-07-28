@@ -2,16 +2,15 @@ require 'spec_helper'
 
 require 'test_cluster'
 
-RSpec.configure do |config|
-  config.before(:each) do
+RSpec.shared_context "a single broker cluster" do
+  before(:each) do
     JavaRunner.remove_tmp
     JavaRunner.set_kafka_path!
     $tc = TestCluster.new
     $tc.start
-    sleep 5
   end
 
-  config.after(:each) do
+  after(:each) do
     $tc.stop
   end
 end

@@ -3,10 +3,12 @@ require 'spec_helper'
 require 'test_cluster'
 
 class ThreeBrokerCluster
-  def initialize(properties = {})
+  attr_reader :brokers, :zookeeper
+
+  def initialize(partitions, properties = {})
     @zookeeper = ZookeeperRunner.new
     @brokers = (9092..9094).map { |port| BrokerRunner.new(port - 9092, port,
-                                                          3,
+                                                          partitions,
                                                           2,
                                                           properties) }
   end
@@ -40,17 +42,19 @@ class ThreeBrokerCluster
   end
 end
 
-RSpec.configure do |config|
-  config.before(:each) do
+RSpec.shared_context "a multiple broker cluster" do
+  let(:kafka_partitions) { 3 }
+
+  before(:each) do
     JavaRunner.remove_tmp
     JavaRunner.set_kafka_path!
-    $tc = ThreeBrokerCluster.new
+    $tc = ThreeBrokerCluster.new(kafka_partitions)
     $tc.start
     SPEC_LOGGER.info "Waiting on cluster"
     sleep 10 # wait for cluster to come up
   end
 
-  config.after(:each) do
+  after(:each) do
     $tc.stop if $tc
   end
 end
