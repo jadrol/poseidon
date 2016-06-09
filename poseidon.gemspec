@@ -23,4 +23,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency(%q<yard>)
   gem.add_development_dependency(%q<simplecov>)
   gem.add_development_dependency(%q<snappy>)
+  gem.add_development_dependency(%q<timecop>)
 end

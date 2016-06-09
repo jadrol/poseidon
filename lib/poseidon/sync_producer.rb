@@ -58,7 +58,8 @@ module Poseidon
           break
         else
           Kernel.sleep retry_backoff_ms / 1000.0
-          refresh_metadata(messages_to_send.topic_set)
+          reset_metadata
+          ensure_metadata_available_for_topics(messages_to_send)
         end
       end
 
@@ -80,14 +81,14 @@ module Poseidon
     def ensure_metadata_available_for_topics(messages_to_send)
       return if !messages_to_send.needs_metadata?
 
-      Poseidon.logger.debug { "Fetching metadata for #{messages_to_send.topic_set}. (Attempt 1)" }
+      Poseidon.logger.debug { "Fetching metadata for #{messages_to_send.topic_set.inspect}. (Attempt 1)" }
       refresh_metadata(messages_to_send.topic_set)
       return if !messages_to_send.needs_metadata?
 
       2.times do |n|
         sleep 5
 
-        Poseidon.logger.debug { "Fetching metadata for #{messages_to_send.topic_set}. (Attempt #{n+2})" }
+        Poseidon.logger.debug { "Fetching metadata for #{messages_to_send.topic_set.inspect}. (Attempt #{n+2})" }
         refresh_metadata(messages_to_send.topic_set)
         return if !messages_to_send.needs_metadata?
       end
@@ -132,6 +133,12 @@ module Poseidon
 
       @cluster_metadata.update(@broker_pool.fetch_metadata(topics_to_refresh))
       @broker_pool.update_known_brokers(@cluster_metadata.brokers)
+    end
+
+    def reset_metadata
+      Poseidon.logger.debug { "Resetting metdata" }
+      @cluster_metadata.reset
+      @broker_pool.close
     end
 
     def send_to_broker(messages_for_broker)

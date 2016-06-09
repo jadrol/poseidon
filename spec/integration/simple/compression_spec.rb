@@ -1,6 +1,8 @@
 require 'integration/simple/spec_helper'
 
 RSpec.describe "compression", :type => :request do
+  include_context "a single broker cluster"
+
   it "roundtrips" do
     i = rand(1000)
 

@@ -2,6 +2,8 @@ require 'integration/simple/spec_helper'
 
 include Protocol
 RSpec.describe Connection, :type => :request do
+  include_context "a single broker cluster"
+
   before(:each) do
     @connection = Connection.new("localhost", 9092, "test", 10_000)
   end

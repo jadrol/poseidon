@@ -27,3 +27,6 @@ include Poseidon
 
 require 'coveralls'
 Coveralls.wear!
+
+require 'timecop'
+Timecop.safe_mode = true

@@ -1,6 +1,8 @@
 require 'integration/simple/spec_helper'
 
 RSpec.describe "unavailable broker scenarios:", :type => :request do
+  include_context "a single broker cluster"
+
   context "producer with a dead broker in bootstrap list" do
     before(:each) do
       @p = Producer.new(["localhost:9091","localhost:9092"], "test")

@@ -22,4 +22,22 @@ RSpec.describe TopicMetadata do
 
     expect(tm.partition_leader(0)).to eq(0)
   end
+
+  context "#available_partitions" do
+    it "includes when missing replicas" do
+      partition_metadata = Protocol::PartitionMetadata.new(9, 0, 0, [0], [0])
+      partitions = [partition_metadata]
+      tm = TopicMetadata.new(Protocol::TopicMetadataStruct.new(0, "topic", partitions))
+
+      expect(tm.available_partitions.length).to be(1)
+    end
+
+    it "ignores other errors" do
+      partition_metadata = Protocol::PartitionMetadata.new(2, 0, 0, [0], [0])
+      partitions = [partition_metadata]
+      tm = TopicMetadata.new(Protocol::TopicMetadataStruct.new(0, "topic", partitions))
+
+      expect(tm.available_partitions.length).to be(0)
+    end
+  end
 end

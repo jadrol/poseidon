@@ -1,6 +1,6 @@
 module Poseidon
   # BrokerPool allows you to send api calls to the a brokers Connection.
-  # 
+  #
   # @api private
   class BrokerPool
     class UnknownBroker < StandardError; end
@@ -26,7 +26,7 @@ module Poseidon
     def fetch_metadata(topics)
       @seed_brokers.each do |broker|
         if metadata = fetch_metadata_from_broker(broker, topics)
-          Poseidon.logger.debug { "Fetched metadata\n" + metadata.to_s }
+          Poseidon.logger.debug { "Fetched metadata from #{broker}:\n" + metadata.to_s }
           return metadata
         end
       end

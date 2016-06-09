@@ -1,6 +1,7 @@
 require 'integration/simple/spec_helper'
 
 RSpec.describe "simple producer and consumer", :type => :request do
+  include_context "a single broker cluster"
 
   describe "writing and consuming one topic" do
     it "fetches produced messages" do

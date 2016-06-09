@@ -1,6 +1,8 @@
 require 'integration/simple/spec_helper'
 
 RSpec.describe "truncated messages", :type => :request do
+  include_context "a single broker cluster"
+
   before(:each) do
     @s1 = "a" * 335
     @s2 = "b" * 338

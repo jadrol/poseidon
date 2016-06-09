@@ -71,6 +71,11 @@ module Poseidon
       out
     end
 
+    def reset
+      @brokers        = {}
+      @topic_metadata = {}
+    end
+
     private
     def update_topics(topics)
       topics.each do |topic|

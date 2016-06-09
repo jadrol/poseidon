@@ -8,6 +8,7 @@ class TestCluster
   def start
     @zookeeper.start
     @broker.start
+    sleep 5
   end
 
   def stop
@@ -153,10 +154,12 @@ class BrokerRunner
     "leader.imbalance.check.interval.seconds" => 5
   }
 
+  attr_reader :id
+
   def initialize(id, port, partition_count = 1, replication_factor = 1, properties = {})
     @id   = id
     @port = port
-    @jr = JavaRunner.new("broker_#{id}", 
+    @jr = JavaRunner.new("broker_#{id}",
                          "#{ENV['KAFKA_PATH']}/bin/kafka-run-class.sh -daemon -name broker_#{id} kafka.Kafka",
                          "ps ax | grep -i 'kafka\.Kafka' | grep java | grep broker_#{id} | grep -v grep | awk '{print $1}'",
                          "SIGTERM",
@@ -197,7 +200,7 @@ class ZookeeperRunner
   def pid
     @jr.pid
   end
-  
+
   def start
     @jr.start
   end
